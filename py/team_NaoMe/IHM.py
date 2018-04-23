@@ -33,23 +33,23 @@ color_index = 0
  
 #Création des touches
 
-clickable_area_left_strafe = pygame.Rect((1*taille_touches, 3*taille_touches), (1*taille_touches, 1*taille_touches))
-rect_left_strafe = pygame.Surface(clickable_area_left_strafe.size)
+clickable_area_StrafeL = pygame.Rect((1*taille_touches, 3*taille_touches), (1*taille_touches, 1*taille_touches))
+rect_StrafeL = pygame.Surface(clickable_area_StrafeL.size)
 
-clickable_area_forward = pygame.Rect((2*taille_touches, 2*taille_touches), (1*taille_touches, 1*taille_touches))
-rect_forward = pygame.Surface(clickable_area_left_strafe.size)
+clickable_area_Go = pygame.Rect((2*taille_touches, 2*taille_touches), (1*taille_touches, 1*taille_touches))
+rect_Go = pygame.Surface(clickable_area_StrafeL.size)
 
-clickable_area_right_strafe = pygame.Rect((3*taille_touches, 3*taille_touches), (1*taille_touches, 1*taille_touches))
-rect_right_strafe = pygame.Surface(clickable_area_right_strafe.size)
+clickable_area_StrafeR = pygame.Rect((3*taille_touches, 3*taille_touches), (1*taille_touches, 1*taille_touches))
+rect_StrafeR = pygame.Surface(clickable_area_StrafeR.size)
 
-clickable_area_backward = pygame.Rect((2*taille_touches, 4*taille_touches), (1*taille_touches, 1*taille_touches))
-rect_backward = pygame.Surface(clickable_area_backward.size)
+clickable_area_MovingBackward = pygame.Rect((2*taille_touches, 4*taille_touches), (1*taille_touches, 1*taille_touches))
+rect_MovingBackward = pygame.Surface(clickable_area_MovingBackward.size)
 
-clickable_area_pause = pygame.Rect((2*taille_touches, 3*taille_touches), (1*taille_touches, 1*taille_touches))
-rect_pause = pygame.Surface(clickable_area_pause.size)
+clickable_area_Wait = pygame.Rect((2*taille_touches, 3*taille_touches), (1*taille_touches, 1*taille_touches))
+rect_Wait = pygame.Surface(clickable_area_Wait.size)
 
-clickable_area_fast_forward = pygame.Rect((2*taille_touches,1*taille_touches), (1*taille_touches, 1*taille_touches))
-rect_fast_forward = pygame.Surface(clickable_area_fast_forward.size)
+clickable_area_GoFast = pygame.Rect((2*taille_touches,1*taille_touches), (1*taille_touches, 1*taille_touches))
+rect_GoFast = pygame.Surface(clickable_area_GoFast.size)
 
 clickable_area_rotate_right = pygame.Rect((3*taille_touches,2*taille_touches), (1*taille_touches, 1*taille_touches))
 rect_rotate_right = pygame.Surface(clickable_area_rotate_right.size)
@@ -68,122 +68,93 @@ rect_angle_rotation = pygame.Surface(clickable_area_angle_rotation.size)
 
 #Boucle infinie
 
-action_en_cours = "PAUSE"
+action_en_cours = "Wait"
 
 while continuer:
     
     #NaoMe.getImage()
     
-    rect_left_strafe.fill(COLORS[2])
-    rect_backward.fill(COLORS[2])
-    rect_forward.fill(COLORS[2])
-    rect_right_strafe.fill(COLORS[2])
-    rect_pause.fill(COLORS[2])
-    rect_fast_forward.fill(COLORS[2])
+    rect_StrafeL.fill(COLORS[2])
+    rect_MovingBackward.fill(COLORS[2])
+    rect_Go.fill(COLORS[2])
+    rect_StrafeR.fill(COLORS[2])
+    rect_Wait.fill(COLORS[2])
+    rect_GoFast.fill(COLORS[2])
     rect_rotate_right.fill(COLORS[2])
     rect_rotate_left.fill(COLORS[2])
     rect_shoot_right.fill(COLORS[2])
     rect_shoot_left.fill(COLORS[2])
     rect_angle_rotation.fill(COLORS[0])
     
-    for event in pygame.event.get():   #On parcours la liste de tous les événements reçus
-
-        if event.type == KEYDOWN:
-            if event.key == K_RIGHT:
-                action_en_cours = "RIGHT_STRAFE"
-                print("RIGHT")
-            
-            if event.key == K_LEFT:
-                action_en_cours = "LEFT_STRAFE"
-                print("LEFT")
-            
-            if  event.key == K_UP:
-                if action_en_cours == "FORWARD":
-                    action_en_cours = "FAST_FORWARD"
-                    print("RUN")
-                elif action_en_cours != "FAST_FORWARD":
-                    action_en_cours = "FORWARD"
-                    print("UP")
-            
-            if event.key == K_DOWN:
-                if action_en_cours == "FAST_FORWARD":
-                    action_en_cours = "FORWARD"
-                    print("UP")
-                elif action_en_cours == "FORWARD":
-                    action_en_cours = "PAUSE"
-                    print("PAUSE")
-                else:
-                    action_en_cours = "BACKWARD"
-                    print("RECULE")
     
         if event.type == QUIT:     #Si un de ces événements est de type QUIT
 
             continuer = 0      #On arrête la boucle
         
         if event.type == MOUSEBUTTONDOWN: # quand je relache le bouton
-            if clickable_area_left_strafe.collidepoint(event.pos):
-                action_en_cours = "LEFT_STRAFE"
+            if clickable_area_StrafeL.collidepoint(event.pos):
+                action_en_cours = "StrafeL"
                 print("LEFT")
-            if clickable_area_forward.collidepoint(event.pos):
-                action_en_cours = "FORWARD"
+            if clickable_area_Go.collidepoint(event.pos):
+                action_en_cours = "Go"
                 print("UP")
-            if clickable_area_backward.collidepoint(event.pos):
-                action_en_cours = "BACKWARD"
+            if clickable_area_MovingBackward.collidepoint(event.pos):
+                action_en_cours = "MovingBackward"
                 print("DOWN")
-            if clickable_area_right_strafe.collidepoint(event.pos):
-                action_en_cours = "RIGHT_STRAFE"
+            if clickable_area_StrafeR.collidepoint(event.pos):
+                action_en_cours = "StrafeR"
                 print("RIGHT")
-            if clickable_area_pause.collidepoint(event.pos):
-                action_en_cours = "PAUSE"
-                print("PAUSE")
-            if clickable_area_fast_forward.collidepoint(event.pos):
-                action_en_cours = "FAST_FORWARD"
+            if clickable_area_Wait.collidepoint(event.pos):
+                action_en_cours = "Wait"
+                print("Wait")
+            if clickable_area_GoFast.collidepoint(event.pos):
+                action_en_cours = "GoFast"
                 print("RUN")
             if clickable_area_rotate_left.collidepoint(event.pos):
-                action_en_cours = "ROTATE_LEFT"
+                action_en_cours = "TurnL"
                 print("ROTATE LEFT")
             if clickable_area_rotate_right.collidepoint(event.pos):
-                action_en_cours = "ROTATE_RIGHT"
+                action_en_cours = "TurnR"
                 print("ROTATE RIGHT")
             if clickable_area_shoot_left.collidepoint(event.pos):
-                action_en_cours = "SHOOT_LEFT"
+                action_en_cours = "KickL"
                 print("SHOOT LEFT")
             if clickable_area_shoot_right.collidepoint(event.pos):
-                action_en_cours = "SHOOT_RIGHT"
+                action_en_cours = "KickR"
                 print("SHOOT RIGHT")
             if clickable_area_angle_rotation.collidepoint(event.pos):
                 action_en_cours = "TOURNE"
                 angle = 0.5*event.pos[0]-240
                 print("TOURNE"+str(angle))
             
-    if action_en_cours == "FORWARD":
-        rect_forward.fill(COLORS[1])
-    if action_en_cours == "LEFT_STRAFE":
-        rect_left_strafe.fill(COLORS[1])
-    if action_en_cours == "RIGHT_STRAFE":
-        rect_right_strafe.fill(COLORS[1])
-    if action_en_cours == "BACKWARD":
-        rect_backward.fill(COLORS[1])
-    if action_en_cours == "PAUSE":
-        rect_pause.fill(COLORS[1])
-    if action_en_cours == "FAST_FORWARD":
-        rect_fast_forward.fill(COLORS[1])
-    if action_en_cours == "ROTATE_LEFT":
+    if action_en_cours == "Go":
+        rect_Go.fill(COLORS[1])
+    if action_en_cours == "StrafeL":
+        rect_StrafeL.fill(COLORS[1])
+    if action_en_cours == "StrafeR":
+        rect_StrafeR.fill(COLORS[1])
+    if action_en_cours == "MovingBackward":
+        rect_MovingBackward.fill(COLORS[1])
+    if action_en_cours == "Wait":
+        rect_Wait.fill(COLORS[1])
+    if action_en_cours == "GoFast":
+        rect_GoFast.fill(COLORS[1])
+    if action_en_cours == "TurnL":
         rect_rotate_left.fill(COLORS[1])
-    if action_en_cours == "ROTATE_RIGHT":
+    if action_en_cours == "TurnR":
         rect_rotate_right.fill(COLORS[1])
-    if action_en_cours == "SHOOT_LEFT":
+    if action_en_cours == "KickL":
         rect_shoot_left.fill(COLORS[1])
-    if action_en_cours == "SHOOT_RIGHT":
+    if action_en_cours == "KickR":
         rect_shoot_right.fill(COLORS[1])
     
     screen.fill(0) # On efface tout l'écran
-    screen.blit(rect_forward, clickable_area_forward)
-    screen.blit(rect_backward, clickable_area_backward)
-    screen.blit(rect_right_strafe, clickable_area_right_strafe)
-    screen.blit(rect_left_strafe, clickable_area_left_strafe)
-    screen.blit(rect_pause, clickable_area_pause)
-    screen.blit(rect_fast_forward, clickable_area_fast_forward)
+    screen.blit(rect_Go, clickable_area_Go)
+    screen.blit(rect_MovingBackward, clickable_area_MovingBackward)
+    screen.blit(rect_StrafeR, clickable_area_StrafeR)
+    screen.blit(rect_StrafeL, clickable_area_StrafeL)
+    screen.blit(rect_Wait, clickable_area_Wait)
+    screen.blit(rect_GoFast, clickable_area_GoFast)
     screen.blit(rect_rotate_right, clickable_area_rotate_right)
     screen.blit(rect_rotate_left, clickable_area_rotate_left)
     screen.blit(rect_shoot_right, clickable_area_shoot_right)

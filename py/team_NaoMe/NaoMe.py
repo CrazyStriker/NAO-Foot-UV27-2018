@@ -41,6 +41,7 @@ f7316f3 32 minutes ago
 import fsm
 import time
 import pygame
+from pygame.locals import *
 import sys
 import motion
 from naoqi import ALProxy
@@ -50,8 +51,13 @@ import almath
 import numpy as np
 import cv2
 from numpy.random import randint
+
+taille_touches = 50
+
 pygame.init()
-screen = pygame.display.set_mode((320, 240))
+screen = pygame.display.set_mode((320*3, 240*3))
+font=pygame.font.Font(None, 20)
+pygame.display.flip()
 
 DD = randint(0,2)
 robotIp = "localhost"
@@ -146,7 +152,7 @@ def getImage(): #cf doc aldebaran pour un affichage en live
     image2=pygame.Surface((height, width))
     pygame.surfarray.blit_array(image2,image)
     image2 = pygame.transform.rotate(image2,-90.)
-    pygame.transform.scale(image2,(320*3,240*3))
+    image2 = pygame.transform.scale(image2 , (320*3,240*3))
     screen.blit(image2,(0,0))
     pygame.display.flip()
 
@@ -218,6 +224,7 @@ x = 0.5
 y = 0.0
 theta1 = -math.pi/18
 theta2 = math.pi/18
+theta = 0
 frequency = 1
 
 
@@ -236,6 +243,57 @@ def getKey():
         if event.type == pygame.KEYDOWN:
             c=event.key
             cok=True
+        if event.type == MOUSEBUTTONDOWN: # quand je relache le bouton
+            if clickable_area_StrafeL.collidepoint(event.pos):
+                c = pygame.K_LEFT
+                cok = True
+                
+            if clickable_area_Go.collidepoint(event.pos):
+                c = pygame.K_UP
+                cok = True
+                
+            if clickable_area_MovingBackward.collidepoint(event.pos):
+                c = pygame.K_DOWN
+                cok = True
+                
+            if clickable_area_StrafeR.collidepoint(event.pos):
+                c = pygame.K_RIGHT
+                cok = True
+                
+            if clickable_area_Wait.collidepoint(event.pos):
+                c = pygame.K_s
+                cok = True
+                
+            if clickable_area_GoFast.collidepoint(event.pos):
+                c = pygame.K_LSHIFT
+                cok = True
+                
+            if clickable_area_rotate_left.collidepoint(event.pos):
+                c = pygame.K_q
+                cok = True
+                
+            if clickable_area_rotate_right.collidepoint(event.pos):
+                c = pygame.K_d
+                cok = True
+                
+            if clickable_area_shoot_left.collidepoint(event.pos):
+                c = pygame.K_a
+                cok = True
+                
+            if clickable_area_shoot_right.collidepoint(event.pos):
+                c = pygame.K_e
+                cok = True
+                
+            if clickable_area_angle_rotation.collidepoint(event.pos):
+                theta = (0.5*event.pos[0]-240)*np.pi/180
+                if theta<0:
+                    c = pygame.K_LEFT
+                    cok = True
+                if theta>0:    
+                    c = pygame.K_RIGHT
+                    cok = True
+                
+                
     print(pygame.K_SPACE,c)
     return cok,c
 
@@ -275,7 +333,10 @@ def doRun():
     return event
 
 def TurnRight():
-    motionProxy.setWalkTargetVelocity(0, y, theta1, frequency)
+    if f.curState == "Avoid":
+        motionProxy.setWalkTargetVelocity(0, y, theta1, frequency)
+    else:
+        motionProxy.setWalkTargetVelocity(0, y, theta, frequency)
     print(">>>>>> action : rotation a droite pendant 1 s") 
     time.sleep(0.1)
     newKey,c = getKey(); # check if key pressed
@@ -304,7 +365,10 @@ def TurnRight():
     return event
 
 def TurnLeft():
-    motionProxy.setWalkTargetVelocity(0, y, theta2, frequency)
+    if f.curState == "Avoid":
+        motionProxy.setWalkTargetVelocity(0, y, theta2, frequency)
+    else:
+        motionProxy.setWalkTargetVelocity(0, y, theta, frequency)
     print(">>>>>> action : rotation a gauche pendant 1 s") 
     time.sleep(0.1)
     newKey,c = getKey(); # check if key pressed
@@ -686,6 +750,133 @@ def doRecule():
             event="StrafeR"
     return event
 
+
+
+taille_touches = 50
+
+
+pygame.init()
+screen = pygame.display.set_mode((320*3, 240*3))
+
+
+font=pygame.font.Font(None, 20)
+
+
+pygame.display.flip()
+
+continuer = 1
+RED = (255, 0, 0)
+GREEN = (0, 255, 0)
+BLUE = (0, 0, 255)
+COLORS = (RED, GREEN, BLUE)
+color_index = 0
+ 
+#Création des touches
+
+clickable_area_StrafeL = pygame.Rect((1*taille_touches, 3*taille_touches), (1*taille_touches, 1*taille_touches))
+rect_StrafeL = pygame.Surface(clickable_area_StrafeL.size)
+
+clickable_area_Go = pygame.Rect((2*taille_touches, 2*taille_touches), (1*taille_touches, 1*taille_touches))
+rect_Go = pygame.Surface(clickable_area_StrafeL.size)
+
+clickable_area_StrafeR = pygame.Rect((3*taille_touches, 3*taille_touches), (1*taille_touches, 1*taille_touches))
+rect_StrafeR = pygame.Surface(clickable_area_StrafeR.size)
+
+clickable_area_MovingBackward = pygame.Rect((2*taille_touches, 4*taille_touches), (1*taille_touches, 1*taille_touches))
+rect_MovingBackward = pygame.Surface(clickable_area_MovingBackward.size)
+
+clickable_area_Wait = pygame.Rect((2*taille_touches, 3*taille_touches), (1*taille_touches, 1*taille_touches))
+rect_Wait = pygame.Surface(clickable_area_Wait.size)
+
+clickable_area_GoFast = pygame.Rect((2*taille_touches,1*taille_touches), (1*taille_touches, 1*taille_touches))
+rect_GoFast = pygame.Surface(clickable_area_GoFast.size)
+
+clickable_area_rotate_right = pygame.Rect((3*taille_touches,2*taille_touches), (1*taille_touches, 1*taille_touches))
+rect_rotate_right = pygame.Surface(clickable_area_rotate_right.size)
+
+clickable_area_rotate_left = pygame.Rect((1*taille_touches,2*taille_touches), (1*taille_touches, 1*taille_touches))
+rect_rotate_left = pygame.Surface(clickable_area_rotate_left.size)
+
+clickable_area_shoot_right = pygame.Rect((3*taille_touches,4*taille_touches), (1*taille_touches, 1*taille_touches))
+rect_shoot_right = pygame.Surface(clickable_area_shoot_right.size)
+
+clickable_area_shoot_left = pygame.Rect((1*taille_touches,4*taille_touches), (1*taille_touches, 1*taille_touches))
+rect_shoot_left = pygame.Surface(clickable_area_shoot_left.size)
+
+clickable_area_angle_rotation = pygame.Rect((120,630), (720, 50))
+rect_angle_rotation = pygame.Surface(clickable_area_angle_rotation.size)
+
+def screen_refresh():
+    
+    rect_StrafeL.fill(COLORS[2])
+    rect_MovingBackward.fill(COLORS[2])
+    rect_Go.fill(COLORS[2])
+    rect_StrafeR.fill(COLORS[2])
+    rect_Wait.fill(COLORS[2])
+    rect_GoFast.fill(COLORS[2])
+    rect_rotate_right.fill(COLORS[2])
+    rect_rotate_left.fill(COLORS[2])
+    rect_shoot_right.fill(COLORS[2])
+    rect_shoot_left.fill(COLORS[2])
+    rect_angle_rotation.fill(COLORS[0])
+    
+    if event == "Go":
+        rect_Go.fill(COLORS[1])
+    if event == "StrafeL":
+        rect_StrafeL.fill(COLORS[1])
+    if event == "StrafeR":
+        rect_StrafeR.fill(COLORS[1])
+    if event == "MovingBackward":
+        rect_MovingBackward.fill(COLORS[1])
+    if event == "Wait":
+        rect_Wait.fill(COLORS[1])
+    if event == "GoFast":
+        rect_GoFast.fill(COLORS[1])
+    if event == "TurnL":
+        rect_rotate_left.fill(COLORS[1])
+    if event == "TurnR":
+        rect_rotate_right.fill(COLORS[1])
+    if event == "KickL":
+        rect_shoot_left.fill(COLORS[1])
+    if event == "KickR":
+        rect_shoot_right.fill(COLORS[1])
+    
+    screen.fill(255) # On efface tout l'écran
+    
+    getImage()
+    
+    screen.blit(rect_Go, clickable_area_Go)
+    screen.blit(rect_MovingBackward, clickable_area_MovingBackward)
+    screen.blit(rect_StrafeR, clickable_area_StrafeR)
+    screen.blit(rect_StrafeL, clickable_area_StrafeL)
+    screen.blit(rect_Wait, clickable_area_Wait)
+    screen.blit(rect_GoFast, clickable_area_GoFast)
+    screen.blit(rect_rotate_right, clickable_area_rotate_right)
+    screen.blit(rect_rotate_left, clickable_area_rotate_left)
+    screen.blit(rect_shoot_right, clickable_area_shoot_right)
+    screen.blit(rect_shoot_left, clickable_area_shoot_left)
+    screen.blit(rect_angle_rotation,clickable_area_angle_rotation)
+    
+    text = font.render("FW",1,(255,255,255))
+    screen.blit(text, (2*taille_touches+taille_touches/8, 2*taille_touches+taille_touches/4))
+    text = font.render("BW",1,(255,255,255))
+    screen.blit(text, (2*taille_touches+taille_touches/8, 4*taille_touches+taille_touches/4))
+    text = font.render("RS",1,(255,255,255))
+    screen.blit(text, (3*taille_touches+taille_touches/8, 3*taille_touches+taille_touches/4))
+    text = font.render("LS",1,(255,255,255))
+    screen.blit(text, (1*taille_touches+taille_touches/8, 3*taille_touches+taille_touches/4))
+    text = font.render("WT",1,(255,255,255))
+    screen.blit(text, (2*taille_touches+taille_touches/8, 3*taille_touches+taille_touches/4))
+    text = font.render("FFW",1,(255,255,255))
+    screen.blit(text, (2*taille_touches+taille_touches/8, 1*taille_touches+taille_touches/4))
+    text = font.render("RL",1,(255,255,255))
+    screen.blit(text, (1*taille_touches+taille_touches/8, 2*taille_touches+taille_touches/4))
+    text = font.render("RR",1,(255,255,255))
+    screen.blit(text, (3*taille_touches+taille_touches/8, 2*taille_touches+taille_touches/4))
+    
+    
+    pygame.display.flip()
+
 if __name__== "__main__":
     
     # define the states
@@ -819,7 +1010,6 @@ if __name__== "__main__":
     run = True   
     while (run):
         State = f.curState
-        getImage()
         funct = f.run () # function to be executed in the new state
         if f.curState != end_state:
             newEvent = funct() # new event when state action is finished
@@ -828,6 +1018,7 @@ if __name__== "__main__":
         else:
             funct()
             run = False
+        screen_refresh()
             
     print("End of the programm")
 
